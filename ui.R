@@ -7,7 +7,12 @@ sidebar <- dashboardSidebar(
     sidebarMenu(
         menuItem("Housing Demand", tabName = "demand", icon = icon("dashboard")),
         menuItem("Housing Prices", tabName = "prices", icon = icon("dashboard")),
-        menuItem("Explore the Raw Data", tabName = "data", icon = icon("dashboard"))
+        menuItem("Explore the Raw Data", tabName = "data", icon = icon("dashboard")),
+        div(""),
+        div("Note: this web app is optimized for full "),
+        div("screen view. Please maximize your"),
+        div("browser window for the best DataViz"),
+        div("experience!")
     )
 )
 
@@ -18,7 +23,7 @@ body <- dashboardBody(
                 fluidRow(
                     box(
                         title = "Where Are Property Sales the Highest?", status = "primary", solidHeader = TRUE,
-                        plotOutput("popularneighborhoods", height = 250)
+                        plotOutput("popularneighborhoods", height = 275)
                     ),
                     
                     box(
@@ -31,15 +36,27 @@ body <- dashboardBody(
                                                      choices = "", multiple = F)),
                         collapsible = TRUE
                     )
+                ),
+                fluidRow(
+                    box(
+                        title = "Breakdown of Property Sales by Borough", status = "primary", width = 4, solidHeader = TRUE,
+                        plotlyOutput("demandByBorough", height = 275)
+                    ),
+                    box(
+                        title = "Types of Property Demanded, by Borough", status = "warning", width = 4, solidHeader = TRUE
+                    ),
+                    box(
+                        title = "This is the Third box", status = "primary", width = 4, solidHeader = TRUE
+                    )
                 )
         ),
-
+        
         tabItem(tabName = "prices",
                 h2("Exploring Housing Pricing in NYC"),
                 fluidRow(
                     box(
                         title = "Explore Differet Pricing Relationships by Borough", status = "primary", solidHeader = TRUE,
-                        plotOutput("pricepredictors", height = 250)
+                        plotOutput("pricepredictors", height = 275)
                     ),
                     box(
                         title = "Inputs", status = "warning", solidHeader = TRUE,
@@ -53,8 +70,17 @@ body <- dashboardBody(
                                          checkboxGroupInput("boroos",
                                                             "Select Borough(s) to Plot:",
                                                             choices = "")),
-                        checkboxInput("smooth", "Add Smooth Fit?"),
+                        checkboxInput("smooth", "Add trend line"),
                         collapsible = TRUE
+                    )
+                ),
+                fluidRow(
+                    box(
+                        title = "What's the most Expensive Borough", status = "primary", width = 4, solidHeader = TRUE,
+                        plotOutput("pricebyborough", height=275)
+                    ),
+                    box(
+                        title = "Types of Property Demanded, by Borough", status = "warning", width = 8, solidHeader = TRUE
                     )
                 )
         ),
