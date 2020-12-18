@@ -2,14 +2,16 @@ library(shiny)
 library(shinydashboard)
 library(tidyverse)
 library(plotly)
+library(DT)
 
 sidebar <- dashboardSidebar(
     sidebarMenu(
-        menuItem("Housing Demand", tabName = "demand", icon = icon("dashboard")),
-        menuItem("Housing Prices", tabName = "prices", icon = icon("dashboard")),
-        menuItem("Explore the Raw Data", tabName = "data", icon = icon("dashboard")),
+        menuItem("Property Prices", tabName = "prices", icon = icon("dollar-sign")),
+        menuItem("Property Demand", tabName = "demand", icon = icon("home")),
+        menuItem("Explore the Raw Data", tabName = "data", icon = icon("table")),
+        menuItem("Source & Acknowledgments", tabName = "source", icon = icon("flag")),
         div(""),
-        div("Note: this web app is optimized for full "),
+        div("Note: this web app is optimized for full"),
         div("screen view. Please maximize your"),
         div("browser window for the best DataViz"),
         div("experience!")
@@ -18,16 +20,17 @@ sidebar <- dashboardSidebar(
 
 body <- dashboardBody(
     tabItems(
+         
         tabItem(tabName = "demand",
-                h2("Exploring Housing Demand in NYC"),
+                h2("Exploring Property Demand in NYC"),
                 fluidRow(
                     box(
-                        title = "Where Are Property Sales the Highest?", status = "primary", solidHeader = TRUE,
+                        title = "What are the City's Most Popular Nieghborhoods?", status = "warning", solidHeader = TRUE,
                         plotOutput("popularneighborhoods", height = 275)
                     ),
                     
                     box(
-                        title = "Sort by Borough", status = "warning", solidHeader = TRUE,
+                        title = "Most Popular Neighborhoods: Sort by Borough", status = "warning", solidHeader = TRUE,
                         radioButtons("pnoptions",
                                      "Find most popular neighborhoods for:",
                                      choices = list("Whole City"="city", "By Borough"="boro")),
@@ -39,27 +42,26 @@ body <- dashboardBody(
                 ),
                 fluidRow(
                     box(
-                        title = "Breakdown of Property Sales by Borough", status = "primary", width = 4, solidHeader = TRUE,
+                        title = "Breakdown of Total Property Sales by Borough", status = "info", width = 4, solidHeader = TRUE,
                         plotlyOutput("demandByBorough", height = 275)
                     ),
                     box(
-                        title = "Types of Property Demanded, by Borough", status = "warning", width = 4, solidHeader = TRUE
-                    ),
-                    box(
-                        title = "This is the Third box", status = "primary", width = 4, solidHeader = TRUE
+                        title = "Residential Haven or Commercialized Strip?", status = "primary", width = 8, solidHeader = TRUE,
+                        plotOutput("propertytype", height = 275)
                     )
                 )
         ),
         
         tabItem(tabName = "prices",
-                h2("Exploring Housing Pricing in NYC"),
+                h2("Exploring Property Pricing in NYC"),
+                
                 fluidRow(
                     box(
-                        title = "Explore Differet Pricing Relationships by Borough", status = "primary", solidHeader = TRUE,
+                        title = "Predicting Property Price", status = "primary", solidHeader = TRUE,
                         plotOutput("pricepredictors", height = 275)
                     ),
                     box(
-                        title = "Inputs", status = "warning", solidHeader = TRUE,
+                        title = "Explore Different Pricing Relationships", status = "primary", solidHeader = TRUE,
                         selectInput("predictor",
                                     "Predict Price by:",
                                     choices = c("Property Square Footage"='LAND SQUARE FEET', "Year Building Was Built"='YEAR BUILT')),
@@ -76,22 +78,36 @@ body <- dashboardBody(
                 ),
                 fluidRow(
                     box(
-                        title = "What's the most Expensive Borough", status = "primary", width = 4, solidHeader = TRUE,
+                        title = "What's the Most Expensive Borough?", status = "info", width = 4, solidHeader = TRUE,
                         plotOutput("pricebyborough", height=275)
                     ),
                     box(
-                        title = "Types of Property Demanded, by Borough", status = "warning", width = 8, solidHeader = TRUE
+                        title = "Compare the Affordability of Various Neighborhoods", status = "warning", width = 8, solidHeader = TRUE,
+                        selectInput("selectneighborhoods",
+                                    "Select Neighborhoods to Compare:",
+                                    choices = "", multiple = TRUE),
+                        plotOutput("neighborhoodprices", height=195)
                     )
                 )
         ),
         tabItem(tabName = "data",
-                h2("Explore the Raw Data"))
+                h2("Explore the Raw Data"),
+                
+                DTOutput("mydata")
+                
+                ),
+        tabItem(tabName = "source",
+                h2("Data Source & Acknowledgements"),
+                
+                div(class = "my-class", p("This web app visualizes data from the dataset 'NYC Property Sales', which details real estate transactions that took place in the five boroughs of New York City in 2016. The original dataset was published by the City of New York, and can be viewed and downloaded at https://www.kaggle.com/new-york-city/nyc-property-sales.")),
+                div(class = "my-class", p("The preparation and cleaning of data for this project were facilitated by the great help of Bernhard Klingenberg, Professor of Statistics at Williams College. Some data preparation techniques were also inspired by the work of Preethi Jayaraman, who also worked with this dataset in a project that can be found at https://rstudio-pubs-static.s3.amazonaws.com/363900_342aa40e88404e2eaf9dbf95163c1cc6.html."))
+        )
     )
 )
 
 dashboardPage(
     skin="yellow",
-    dashboardHeader(title = "Exploring NYC Housing Data"),
+    dashboardHeader(title = "Exploring NYC Property"),
     sidebar,
     body
 )
